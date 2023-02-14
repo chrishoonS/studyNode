@@ -12,7 +12,8 @@ http.createServer((req, res) => {
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var serverRouter = require('./routes/server2');
+var serverRouter1 = require('./routes/server1');
+var serverRouter2 = require('./routes/server2');
 
 var app = express();
 
@@ -28,7 +29,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/server2', serverRouter);
+app.use('/server1', serverRouter1);
+app.use('/server2', serverRouter2);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
