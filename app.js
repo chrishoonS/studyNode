@@ -10,6 +10,51 @@ http.createServer((req, res) => {
   // 여기에 어떻게 응답할 지 적어줍니다.
 });
 
+const DBString = {
+  server: "localhost",
+  database: "db_mps_sns",
+  user: "mpssns",
+  password: "mpssns1243!@",
+  port: 5432
+};
+
+const { Pool } = require('pg');
+const mybatisMapper = require('mybatis-mapper');  //매핑할 마이바티스
+
+mybatisMapper.createMapper(['./mapper/testMapper.xml']);
+
+//조회할 파라미터
+let param = {
+	test_id : 1
+}
+
+const pool = new Pool(DBString);
+
+//질의문 형식
+let format = { language: 'sql', indent: '  ' };
+let query = mybatisMapper.getStatement('testMapper', 'testBasic', param, format);
+//첫번째는 xml의 name값, 두번째는 해당 xml의 id값, 세번째는 파라미터, 마지막은 포맷 입니다.
+
+console.log(query);  //해당쿼리가 조합된 것을 볼 수 있습니다.
+
+const getTbTest = async (test_id) => {
+	const client = await pool.connect();
+
+	try {
+		const test = await mybatisMapper.get('testMapper', 'testBasic', { test_id }, { connection: client });
+
+		return test;
+	} catch (error) {
+		throw error;
+	} finally {
+		client.release();
+	}
+};
+
+getTbTest(1)
+	.then((test) => console.log(test))
+	.catch((error) => console.error(error));
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var serverRouter1 = require('./routes/server1');
